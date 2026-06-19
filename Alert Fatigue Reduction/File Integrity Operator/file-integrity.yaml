@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: worker-aide-config
+  namespace: openshift-file-integrity
+data:
+  # The File Integrity Operator strictly expects 'aide.conf' as the data key
+  aide.conf: |
+    @@define DBDIR /var/lib/aide
+    @@define LOGDIR /var/log/aide
+    database=file:@@{DBDIR}/aide.db.gz
+    database_out=file:@@{DBDIR}/aide.db.new.gz
+    gzip_dbout=yes
+    
+    # ==========================================
+    # SRE PLATFORM EXCLUSIONS
+    # ==========================================
+    !/var/lib/containers/.*
+    !/var/lib/kubelet/.*
+    !/var/run/NetworkManager/.*
+    !/var/lib/NetworkManager/.*
+    /var/log/.* L
+    !/var/lib/machine-config-daemon/.*
+    !/var/log/audit/.*
+    !/var/tmp/.*
+    !/var/cache/.*
+    !/tmp/.*
+
+    # ==========================================
+    # SECURITY & SERVICE MESH AGENT EXCLUSIONS
+    # ==========================================
+    # Twistlock / Prisma Cloud Defender paths
+    !/var/lib/twistlock/.*
+    !/var/run/twistlock/.*
+
+    # OpenShift Service Mesh (Istio Envoy) paths
+    !/var/run/secrets/istio.*
+    !/var/lib/istio/.*
+    !/var/lib/cni/networks/istio-cni/.*
