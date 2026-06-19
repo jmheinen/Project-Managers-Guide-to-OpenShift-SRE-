@@ -9,9 +9,9 @@ To apply this configuration directly to a specific MachineConfigPool (e.g., `wor
 
 ```bash
 oc apply -f clusters/production/kubelet-custom-config.yaml
-```bash
 
-When these thresholds are approached, the Kubelet flags the node with a PressureCondition (e.g., DiskPressure, MemoryPressure). Ensure your Prometheus rules alert on:
+
+## When these thresholds are approached, the Kubelet flags the node with a PressureCondition (e.g., DiskPressure, MemoryPressure). Ensure your Prometheus rules alert on:
 
 kube_node_status_condition{condition="MemoryPressure", status="true"}
 
