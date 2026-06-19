@@ -1,4 +1,3 @@
-# Project-Managers-Guide-to-OpenShift-SRE-
 # The Project Manager’s Guide to OpenShift SRE: Spicing Up Cluster Health
 
 As a Project Manager, it’s easy to look at Site Reliability Engineering (SRE) as "someone else’s problem." But let’s be entirely transparent: if the cluster goes down, your sprint timeline slips, your budget bleeds due to over-provisioning, data gets corrupted, and you’re the one stuck explaining the delivery rework to stakeholders. 
@@ -18,6 +17,7 @@ To manage resources effectively, a PM must visualize what the team is shipping c
 To eliminate costly rework and downstream delivery delays, SRE practices must be "shifted left"—integrated directly into the project lifecycle rather than treated as a post-launch operations afterthought.
 
 
+```mermaid
 graph LR
     A[1. Design Phase] --> B[2. Development]
     B --> C[3. Chaos Testing]
