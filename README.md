@@ -1,0 +1,2 @@
+# Project-Managers-Guide-to-OpenShift-SRE-
+A few tips and recommendations from running production OpenShift Clusters.  As always, please use caution and thoroughly test all code specific to your environment.  I started to consider tuning, editing, cleaning, and SRE'ing as a PM because ultimately I want clean data, less rework, and stable delivery of solutions.
