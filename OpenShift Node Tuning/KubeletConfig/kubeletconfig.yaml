@@ -1,0 +1,75 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: KubeletConfig
+metadata:
+  name: sre-node-resilience-profile
+spec:
+  # Ties this custom configuration specifically to the worker nodes pool
+  machineConfigPoolSelector:
+    matchLabels:
+      pools.operator.openshift.io/worker: ""
+  
+  # Automatically calculates and reserves CPU/Memory resources for system daemons (systemd, journald, etc.)
+  # SRE Rationale: Prevents user workloads from starving core OS processes, avoiding total node lockups.
+  autoSizingReserved: true
+
+  kubeletConfig:
+    # Aggressive log rotation: Limits a single container's log file to 10 Megabytes.
+    # SRE Rationale: Prevents rogue applications with verbose debug logging from filling the root disk rapidly.
+    containerLogMaxSize: 10Mi
+
+    # Keeps a maximum of 3 rotated log files per container (1 active, 2 archived).
+    # SRE Rationale: Caps total log space per container to ~30Mi, guaranteeing predictable disk consumption.
+    containerLogMaxFiles: 3
+
+    # High-water mark for Image Garbage Collection (75%).
+    # SRE Rationale: Kubelet will aggressively delete unused container images once image filesystem utilization hits 75%.
+    imageGCHighThresholdPercent: 75
+
+    # Low-water mark for Image Garbage Collection (70%).
+    # SRE Rationale: The target disk utilization percentage that Image GC attempts to clean down to.
+    imageGCLowThresholdPercent: 70
+
+    # Minimum age (1 minute) an unused image must have before it can be garbage collected.
+    # SRE Rationale: Prevents race conditions where a image is pulled for a new pod deployment but deleted before initialization.
+    imageMinimumGCAge: 1m
+
+    # Hard Eviction Thresholds: Immediate pod eviction with zero grace period when reached.
+    # SRE Rationale: The ultimate line of defense. Exceeding these means the node is dangerously close to a crash.
+    evictionHard:
+      # Evict pods if the dedicated image filesystem drops below 10% available space.
+      imagefs.available: "10%"
+      # Evict pods if free inodes on the image filesystem drop below 5% (prevents inode exhaustion).
+      imagefs.inodesFree: "5%"
+      # Evict pods if available node memory drops below 500 Megabytes. Prevents Kernel OOM panics.
+      memory.available: 500Mi
+      # Evict pods if the main node root filesystem drops below 5% available space.
+      nodefs.available: "5%"
+      # Evict pods if free inodes on the root filesystem drop below 4%.
+      nodefs.inodesFree: "4%"
+
+    # Soft Eviction Thresholds: The warning zone. Pods are given a grace period to move before forced termination.
+    # SRE Rationale: Allows applications to catch SIGTERM signals, drain connections, and spin up on other healthy nodes.
+    evictionSoft:
+      imagefs.available: "15%"
+      imagefs.inodesFree: "10%"
+      memory.available: 1.5Gi
+      nodefs.available: "10%"
+      nodefs.inodesFree: "5%"
+
+    # Defines how long a Soft Eviction condition must persist before the Kubelet begins evicting pods.
+    # SRE Rationale: Prevents "flapping" evictions caused by transient spikes in memory or disk I/O.
+    evictionSoftGracePeriod:
+      imagefs.available: 1m30s
+      imagefs.inodesFree: 1m30s
+      memory.available: 1m30s
+      nodefs.available: 1m30s
+      nodefs.inodesFree: 1m30s
+
+    # The cooling-off period (3 minutes) before a node can transition out of an eviction pressure state.
+    # SRE Rationale: Prevents a rapid cycle of pods being evicted, the node recovering, pods scheduling back, and immediately crashing again.
+    evictionPressureTransitionPeriod: 3m
+
+    # Enforces that host kernel parameters match Kubelet expectations at startup.
+    # SRE Rationale: If a sysctl parameter on the underlying Red Hat Enterprise Linux CoreOS (RHCOS) node is misconfigured, 
+    # the Kubelet will fail to start rather than running in an insecure or unstable state.
+    protectKernelDefaults: true
