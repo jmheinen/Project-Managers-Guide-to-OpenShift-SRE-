@@ -22,6 +22,7 @@ graph LR
     A[1. Design Phase] --> B[2. Development]
     B --> C[3. Chaos Testing]
     C --> D[4. Production Launch]
+```
 
 
 ## 3. The Golden Rule of SRE Project Management
