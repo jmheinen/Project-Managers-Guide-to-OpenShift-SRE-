@@ -17,30 +17,14 @@ To manage resources effectively, a PM must visualize what the team is shipping c
 
 To eliminate costly rework and downstream delivery delays, SRE practices must be "shifted left"—integrated directly into the project lifecycle rather than treated as a post-launch operations afterthought.
 
-```mermaid
+
 graph LR
-    %% Base Styles
-    classDef phase fill:#f3f4f6,stroke:#4b5563,stroke-width:2px,color:#1f2937;
-    classDef metric fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0369a1;
+    A[1. Design Phase] --> B[2. Development]
+    B --> C[3. Chaos Testing]
+    C --> D[4. Production Launch]
 
-    subgraph Project_Lifecycle [SRE-Driven Feature Pipeline]
-        A[1. Design Phase] --> B[2. Development]
-        B --> C[3. Chaos Testing]
-        C --> D[4. Production Launch]
-    end
 
-    %% Apply Phase Styles
-    class A,B,C,D phase;
-
-    %% Detail Callouts
-    A1[• Define SLOs & SLIs<br>• Threat Modeling] -.-> A
-    B1[• Set Resource Limits<br>• Inject Probes] -.-> B
-    C1[• Simulate Pod Failures<br>• Load/Stress Testing] -.-> C
-    D1[• Track Error Budgets<br>• Blameless Post-Mortems] -.-> D
-
-    style Project_Lifecycle fill:#fafafa,stroke:#d1d5db,stroke-width:1px;
-
-    ## 5. The Golden Rule of SRE Project Management
+## 3. The Golden Rule of SRE Project Management
 
 > **"Measure twice, deploy once, automate always."**
 
