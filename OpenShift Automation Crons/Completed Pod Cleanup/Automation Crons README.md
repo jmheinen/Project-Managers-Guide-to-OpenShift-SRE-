@@ -1,0 +1,3 @@
+In Site Reliability Engineering (SRE), automation and predictability are everything. While standard Kubernetes CronJobs handle basic scheduling, OpenShift CronJobs (built on top of enterprise Kubernetes) provide the enhanced security, observability, and guardrails necessary to maintain system reliability at scale.
+
+To an SRE, an OpenShift CronJob isn't just a script on a timer; it is a managed infrastructure component. It ensures that essential background operations happen predictably, securely, and with a clear paper trail, allowing engineers to focus on scaling the system rather than babysitting routine tasks.
